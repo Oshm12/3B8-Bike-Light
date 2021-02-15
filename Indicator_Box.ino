@@ -28,6 +28,7 @@ void setup() {
   pinMode(right_button_pin, INPUT);
   pinMode(hazard_button_pin, INPUT);
 
+  //Set LEDs LOW
   digitalWrite(left_LED, LOW);
   digitalWrite(right_LED, LOW);
   digitalWrite(hazard_LED, LOW);
@@ -43,7 +44,10 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //Serial.println("Loop");
-  
+
+
+  //***BUTTON PIN CHECKS***
+  //Start
   if(digitalRead(left_button_pin)){
       //LEFT BUTTON pressed
 
@@ -76,6 +80,10 @@ void loop() {
       return;
   }
 
+  //end
+
+  //Code for turning LEDS off after a certain length of time
+
   if(millis() - (left_start_t + 10000) > 0){
 
     digitalWrite(left_LED, LOW);
@@ -97,4 +105,3 @@ void loop() {
     
   }
 }
-
