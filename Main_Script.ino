@@ -13,11 +13,13 @@ int indicator_pin_right = 6;
 //light timing variables
 double left_start_t;
 double right_start_t;
-double main_start_t = 0;
-double hazard_start_t = 0;
+double main_start_t;
+double hazard_start_t;
+int brake_pulse = 400;
+
 
 void setup() {
-  
+  Serial.begin(9600);
   //Light Control signal outputs
   pinMode(indicator_pin_left, OUTPUT);
   pinMode(main_light_pin, OUTPUT);
@@ -31,6 +33,7 @@ void loop() {
 
 //test timing for indicators
 //turn on
+/*
 if(millis() > 10000){
   indicator_left = true;
   indicator_right = true;
@@ -41,6 +44,11 @@ if(millis() > 20000){
   indicator_left = false;
   indicator_right = false;
 }
+*/
+  //randomising brake flashing timing
+  if(millis() % 2500 < 50){
+    brake_pulse = random(150,750);
+  }
 
 
   //************Light Control Code***************
@@ -49,14 +57,14 @@ if(millis() > 20000){
   //Standard not braking flashing main light
      if(!brake_light){
       
-          if(millis() < main_start_t + 400){
+          if(millis() < main_start_t + brake_pulse){
             digitalWrite(main_light_pin, HIGH);
           }
           else {
             digitalWrite(main_light_pin, LOW);
           }
     
-          if(millis() > main_start_t + 800){
+          if(millis() > main_start_t + (brake_pulse*2)){
             main_start_t = millis();
           }
   
@@ -111,16 +119,16 @@ if(millis() > 20000){
   if(hazard_light){
   //special hazard light pattern
   int t = hazard_start_t/ 500;
-      if(-1^hazards_start_t > 0){
+      if(-1^hazard_start_t > 0){
         digitalWrite(indicator_pin_right, HIGH);
         digitalWrite(indicator_pin_left, HIGH);
-        digitalWrite(main_light_pin, HIGH)
+        digitalWrite(main_light_pin, HIGH);
       }
       
-      if(-1^hazards_start_t < 0){
+      if(-1^hazard_start_t < 0){
         digitalWrite(indicator_pin_right, LOW);
         digitalWrite(indicator_pin_left, LOW);
-        digitalWrite(main_light_pin, LOW)
+        digitalWrite(main_light_pin, LOW);
       }
 
       if(hazard_start_t > millis() + 60000){
@@ -137,30 +145,65 @@ void serialEvent(){
   //A character with a command will be sent, for hazards, and indicators
   char command;
   
-  //readString actually reads in Chars weirdly
-  command = Serial.readString();
+  
+  command = Serial.read();
+  Serial.println(command);
 
   //using placeholder chars here which may or may not change
 
   if(command == 'l'){
-
+    //turn indicators on
     indicator_left = true;
+    
+    //make sure both indicators aren't on
+    indicator_right = false;
     return;
     
+  }
+  
+  if(command == 'L'){
+    //turn indicators off
+    indicator_left = false;
+    digitalWrite(indicator_pin_left, LOW);
+    return;
+     
   }
 
   if(command == 'r'){
-
+    //turn right indicators on
     indicator_right = true;
+    
+    //make sure both indicators aren't on
+    indicator_left = false;
     return;
     
   }
 
-  if(command == 'h'){
-
-    hazard_light = true;
+  if(command == 'R'){
+    //turn indicators off
+    indicator_right = false;
+    digitalWrite(indicator_pin_right, LOW);
     return;
+     
+  }
+
+  if(command == 'h'){
+    //turn hazards on
+    hazard_light = true;
     hazard_start_t = millis();
 
+    //make sure both indicators aren't on
+    digitalWrite(indicator_pin_left, LOW);
+    digitalWrite(indicator_pin_right, LOW);
+    
+    return;
+
+  }
+
+  if(command == 's'){
+    //turn hazards off
+    hazard_light = false;
+    return;
+    
   }
 }
