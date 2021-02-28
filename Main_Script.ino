@@ -1,3 +1,8 @@
+#include <SoftwareSerial.h>
+byte incoming;
+SoftwareSerial BTSerial(3, 4); // RX | TX
+
+
 //Declaring Variables
 //Flags for lights and modes
 bool indicator_left = false;
@@ -19,7 +24,20 @@ int brake_pulse = 400;
 
 
 void setup() {
+  //BLUETOOTH SERIAL SETUP
   Serial.begin(9600);
+
+  Serial.println("Bluetooth is ready");//Prints sentence to serial port 
+  
+  pinMode(3, INPUT); //Sets the RX pin as an INPUT, sampling
+  
+  pinMode(4, OUTPUT); // Sets TX pin an OUTPUT, can provide current
+  
+  BTSerial.begin(9600); //Setting the baud rate for the HC-05 Module
+  
+  pinMode(LED_BUILTIN, OUTPUT);// Setting the built-in LED as an OUTPUT
+
+  
   //Light Control signal outputs
   pinMode(indicator_pin_left, OUTPUT);
   pinMode(main_light_pin, OUTPUT);
@@ -47,6 +65,7 @@ if(millis() > 20000){
 */
   //randomising brake flashing timing
   if(millis() % 2500 < 50){
+    //random length of pulse between 150 and 750 ms
     brake_pulse = random(150,750);
   }
 
@@ -135,8 +154,91 @@ if(millis() > 20000){
         hazard_light = false;
       }
   }
+
+
+  if(BTSerial.available() > 0) { 
+    // If data is available
+    byte incoming = BTSerial.read();//Read byte from the master
+  
+    Serial.println("Incoming =");
+    
+    Serial.println(incoming);
+
+    //**I THINK THIS SHOULD WORK - NOT TESTED
+    //Should ocnvert incoming achii to char so the rest of the code below will work
+    //if not, send me a message and ill convert to work with ascii
+    char command;
+    command = char(incoming);
+
+    if(command == 'l'){
+    //turn indicators on
+    indicator_left = true;
+    
+    //make sure both indicators aren't on
+    indicator_right = false;
+    return;
+    
+    }
+    
+    if(command == 'L'){
+      //turn indicators off
+      indicator_left = false;
+      digitalWrite(indicator_pin_left, LOW);
+      return;
+       
+    }
+  
+    if(command == 'r'){
+      //turn right indicators on
+      indicator_right = true;
+      
+      //make sure both indicators aren't on
+      indicator_left = false;
+      return;
+      
+    }
+  
+    if(command == 'R'){
+      //turn indicators off
+      indicator_right = false;
+      digitalWrite(indicator_pin_right, LOW);
+      return;
+       
+    }
+  
+    if(command == 'h'){
+      //turn hazards on
+      hazard_light = true;
+      hazard_start_t = millis();
+  
+      //make sure both indicators aren't on
+      digitalWrite(indicator_pin_left, LOW);
+      digitalWrite(indicator_pin_right, LOW);
+      
+      return;
+  
+    }
+  
+    if(command == 's'){
+      //turn hazards off
+      hazard_light = false;
+      return;
+      
+    }
+  
+      
+    }
+  
+  else {
+
+    //no data in Serial Buffer
+    Serial.println("No data available");
+  }
+  
 }
 
+//Following made redudent due to different implimentation using bluetooth. Look above.
+/*
 void serialEvent(){
 
   //Function that runs after each loop when the arduino has recieved some serial message
@@ -207,3 +309,4 @@ void serialEvent(){
     
   }
 }
+*/
