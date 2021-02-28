@@ -1,11 +1,17 @@
-int right_button_pin = 9;
-int hazard_button_pin = 10;
-int button_interupt_pin = 2;
+#include <SoftwareSerial.h>
+byte data = 0x01; //Number 1 hex value 
+SoftwareSerial BTSerial(3, 4); // RX | TX
 
-//Led outputs
-int left_LED = 4;
-int right_LED = 2; 
-int hazard_LED = 3;
+
+//Button inputs
+int left_button_pin = 12;
+int right_button_pin = 6;
+int hazard_button_pin = 9;
+
+
+//Led outputsa
+int right_LED = 5; 
+int hazard_LED = 8;
 
 //Time set ups
 double left_start_t = 0;
@@ -18,8 +24,18 @@ bool right_indicator = false;
 bool hazards = false;
 
 void setup() {
-  // put your setup code here, to run once:
+  //BLUETOOTH & SERIAL SETUP HERE
   Serial.begin(9800);
+
+  Serial.println("Bluetooth is ready");//Prints sentence to serial port 
+  
+  pinMode(3, INPUT); //Sets the RX pin as an INPUT, sampling
+  
+  pinMode(4, OUTPUT); // Sets TX pin an OUTPUT, can provide current
+  
+  pinMode(LED_BUILTIN, OUTPUT);// Setting the built-in LED as an OUTPUT
+  
+  BTSerial.begin(9600); //Setting the baud rate for the HC-05 Module
   //PINMODE OUTPUTS
   
   pinMode(left_LED, OUTPUT);
@@ -57,6 +73,7 @@ void loop() {
       if(!left_indicator){
         //Turning on the light
         Serial.println('l');
+        BTSerial.write("l".getBytes());
         digitalWrite(left_LED, HIGH);
         left_start_t = millis();
         left_indicator = true;
@@ -67,6 +84,7 @@ void loop() {
       if(left_indicator && (millis() - left_start_t) > 750 ){
         //turning off the light
         Serial.println('L');
+        BTSerial.write("L".getBytes());
         digitalWrite(left_LED, LOW);
         left_indicator = false;
         //delay to stop rapid flicking between on off
@@ -82,6 +100,7 @@ void loop() {
       if(!right_indicator){
         //Turning on the light
         Serial.println('r');
+        BTSerial.write("r".getBytes());
         digitalWrite(right_LED, HIGH);
         right_start_t = millis();
         right_indicator = true;
@@ -92,6 +111,7 @@ void loop() {
       if(right_indicator && (millis() - right_start_t) > 750 ){
          //Turning off the light
          Serial.println('R');
+         BTSerial.write("R".getBytes());
          digitalWrite(right_LED, LOW);
          right_indicator = false;
          //delay to stop rapid flicking between on off
@@ -108,6 +128,7 @@ void loop() {
       if(!hazards){
         //turning Hazards on
         Serial.println('h');
+        BTSerial.write("h".getBytes());
         digitalWrite(hazard_LED, HIGH);
         hazard_start_t = millis();
         hazards = true;
@@ -118,6 +139,7 @@ void loop() {
       if(hazards && (millis() - hazard_start_t) > 750 ){
          //Turning off the light
          Serial.println('H');
+         BTSerial.write("H".getBytes());
          digitalWrite(hazard_LED, LOW);
          hazards = false;
          //delay to stop rapid flicking between on off
@@ -154,4 +176,3 @@ void loop() {
     
   }
 }
-
