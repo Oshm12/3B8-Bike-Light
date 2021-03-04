@@ -158,7 +158,7 @@ if(millis() > 20000){
 
   if(BTSerial.available() > 0) { 
     // If data is available
-    byte incoming = BTSerial.read();//Read byte from the master
+    char incoming = BTSerial.read();//Read byte from the master
   
     Serial.println("Incoming =");
     
@@ -168,7 +168,7 @@ if(millis() > 20000){
     //Should ocnvert incoming achii to char so the rest of the code below will work
     //if not, send me a message and ill convert to work with ascii
     char command;
-    command = char(incoming);
+    command = incoming;
 
     if(command == 'l'){
     //turn indicators on
