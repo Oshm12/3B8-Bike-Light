@@ -1,0 +1,22 @@
+#include <SoftwareSerial.h>
+
+SoftwareSerial blueSerial(9,10);  //RX,TX
+void setup()
+{
+  pinMode(9, INPUT);
+  pinMode(10, OUTPUT);
+  blueSerial.begin(9600);
+  Serial.begin(9600);
+}
+ 
+void loop()
+{
+  // Read from HC-05 and send new data to Serial Monitor
+  if (blueSerial.available())
+  {
+    char incoming= blueSerial.read();
+    Serial.print(incoming);
+  }
+}
+
+
