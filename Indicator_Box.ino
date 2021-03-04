@@ -74,7 +74,7 @@ void loop() {
       if(!left_indicator){
         //Turning on the light
         Serial.println('l');
-        BTSerial.write('l');
+        BTSerial.print('l');
         digitalWrite(left_LED, HIGH);
         left_start_t = millis();
         left_indicator = true;
@@ -85,7 +85,7 @@ void loop() {
       if(left_indicator && (millis() - left_start_t) > 750 ){
         //turning off the light
         Serial.println('L');
-        BTSerial.write('L');
+        BTSerial.print('L');
         digitalWrite(left_LED, LOW);
         left_indicator = false;
         //delay to stop rapid flicking between on off
@@ -101,7 +101,7 @@ void loop() {
       if(!right_indicator){
         //Turning on the light
         Serial.println('r');
-        BTSerial.write('r');
+        BTSerial.print('r');
         digitalWrite(right_LED, HIGH);
         right_start_t = millis();
         right_indicator = true;
@@ -112,7 +112,7 @@ void loop() {
       if(right_indicator && (millis() - right_start_t) > 750 ){
          //Turning off the light
          Serial.println('R');
-         BTSerial.write('R');
+         BTSerial.print('R');
          digitalWrite(right_LED, LOW);
          right_indicator = false;
          //delay to stop rapid flicking between on off
@@ -129,7 +129,7 @@ void loop() {
       if(!hazards){
         //turning Hazards on
         Serial.println('h');
-        BTSerial.write('h');
+        BTSerial.print('h');
         digitalWrite(hazard_LED, HIGH);
         hazard_start_t = millis();
         hazards = true;
@@ -140,7 +140,7 @@ void loop() {
       if(hazards && (millis() - hazard_start_t) > 750 ){
          //Turning off the light
          Serial.println('H');
-         BTSerial.write('H');
+         BTSerial.print('H');
          digitalWrite(hazard_LED, LOW);
          hazards = false;
          //delay to stop rapid flicking between on off
