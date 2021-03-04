@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-byte data = 0x01; //Number 1 hex value 
+
 SoftwareSerial BTSerial(3, 4); // RX | TX
 
 
@@ -10,6 +10,7 @@ int hazard_button_pin = 9;
 
 
 //Led outputsa
+int left_LED = 2;
 int right_LED = 5; 
 int hazard_LED = 8;
 
@@ -73,7 +74,7 @@ void loop() {
       if(!left_indicator){
         //Turning on the light
         Serial.println('l');
-        BTSerial.write("l".getBytes());
+        BTSerial.write('l');
         digitalWrite(left_LED, HIGH);
         left_start_t = millis();
         left_indicator = true;
@@ -84,7 +85,7 @@ void loop() {
       if(left_indicator && (millis() - left_start_t) > 750 ){
         //turning off the light
         Serial.println('L');
-        BTSerial.write("L".getBytes());
+        BTSerial.write('L');
         digitalWrite(left_LED, LOW);
         left_indicator = false;
         //delay to stop rapid flicking between on off
@@ -100,7 +101,7 @@ void loop() {
       if(!right_indicator){
         //Turning on the light
         Serial.println('r');
-        BTSerial.write("r".getBytes());
+        BTSerial.write('r');
         digitalWrite(right_LED, HIGH);
         right_start_t = millis();
         right_indicator = true;
@@ -111,7 +112,7 @@ void loop() {
       if(right_indicator && (millis() - right_start_t) > 750 ){
          //Turning off the light
          Serial.println('R');
-         BTSerial.write("R".getBytes());
+         BTSerial.write('R');
          digitalWrite(right_LED, LOW);
          right_indicator = false;
          //delay to stop rapid flicking between on off
@@ -128,7 +129,7 @@ void loop() {
       if(!hazards){
         //turning Hazards on
         Serial.println('h');
-        BTSerial.write("h".getBytes());
+        BTSerial.write('h');
         digitalWrite(hazard_LED, HIGH);
         hazard_start_t = millis();
         hazards = true;
@@ -139,7 +140,7 @@ void loop() {
       if(hazards && (millis() - hazard_start_t) > 750 ){
          //Turning off the light
          Serial.println('H');
-         BTSerial.write("H".getBytes());
+         BTSerial.write('H');
          digitalWrite(hazard_LED, LOW);
          hazards = false;
          //delay to stop rapid flicking between on off
