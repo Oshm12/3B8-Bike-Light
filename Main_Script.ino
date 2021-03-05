@@ -20,6 +20,7 @@ double left_start_t;
 double right_start_t;
 double main_start_t;
 double hazard_start_t;
+double swap_t;
 int brake_pulse = 400;
 
 
@@ -56,7 +57,6 @@ if(millis() > 10000){
   indicator_left = true;
   indicator_right = true;
 }
-
 //turn off
 if(millis() > 20000){
   indicator_left = false;
@@ -137,14 +137,14 @@ if(millis() > 20000){
 
   if(hazard_light){
   //special hazard light pattern
-  int t = hazard_start_t/ 500;
-      if(-1^hazard_start_t > 0){
+  
+      if(millis() - swap_t <= 1000){
         digitalWrite(indicator_pin_right, HIGH);
         digitalWrite(indicator_pin_left, HIGH);
         digitalWrite(main_light_pin, HIGH);
       }
       
-      if(-1^hazard_start_t < 0){
+      if(millis() - swap_t > 1000){
         digitalWrite(indicator_pin_right, LOW);
         digitalWrite(indicator_pin_left, LOW);
         digitalWrite(main_light_pin, LOW);
@@ -152,6 +152,10 @@ if(millis() > 20000){
 
       if(hazard_start_t > millis() + 60000){
         hazard_light = false;
+      }
+
+      if(millis() - swap_t > 1500){
+        swap_t = millis();
       }
   }
 
@@ -210,6 +214,7 @@ if(millis() > 20000){
       //turn hazards on
       hazard_light = true;
       hazard_start_t = millis();
+      swap_t = millis();
   
       //make sure both indicators aren't on
       digitalWrite(indicator_pin_left, LOW);
@@ -240,7 +245,6 @@ if(millis() > 20000){
 //Following made redudent due to different implimentation using bluetooth. Look above.
 /*
 void serialEvent(){
-
   //Function that runs after each loop when the arduino has recieved some serial message
   //Will only run if it has recieved serial packets
   //This will be an instruction from the button box
@@ -250,9 +254,7 @@ void serialEvent(){
   
   command = Serial.read();
   Serial.println(command);
-
   //using placeholder chars here which may or may not change
-
   if(command == 'l'){
     //turn indicators on
     indicator_left = true;
@@ -270,7 +272,6 @@ void serialEvent(){
     return;
      
   }
-
   if(command == 'r'){
     //turn right indicators on
     indicator_right = true;
@@ -280,7 +281,6 @@ void serialEvent(){
     return;
     
   }
-
   if(command == 'R'){
     //turn indicators off
     indicator_right = false;
@@ -288,20 +288,16 @@ void serialEvent(){
     return;
      
   }
-
   if(command == 'h'){
     //turn hazards on
     hazard_light = true;
     hazard_start_t = millis();
-
     //make sure both indicators aren't on
     digitalWrite(indicator_pin_left, LOW);
     digitalWrite(indicator_pin_right, LOW);
     
     return;
-
   }
-
   if(command == 's'){
     //turn hazards off
     hazard_light = false;
