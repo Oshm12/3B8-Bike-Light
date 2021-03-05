@@ -37,6 +37,10 @@ int z_onTime = 0;
 int z_offTime = 0;
 bool z_on = false;
 
+const int xInput = A1;
+const int yInput = A5;
+const int zInput = A3;
+
 
 
 void setup() {
