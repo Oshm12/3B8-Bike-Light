@@ -219,7 +219,7 @@ if(millis() > 20000){
   
     }
   
-    if(command == 's'){
+    if(command == 'H'){
       //turn hazards off
       hazard_light = false;
       return;
